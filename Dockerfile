@@ -16,11 +16,11 @@ COPY . .
 # Générer le client Prisma
 RUN npx prisma generate
 
-# Compiler TypeScript (optionnel si vous préférez ts-node-dev en prod, ici nous utilisons ts-node pour simplifier)
-RUN npm install -g ts-node
+# Compiler le code TypeScript
+RUN npm run build
 
 # Exposer le port (celui défini dans .env, ici 3000)
 EXPOSE 3000
 
 # Démarrer l'application en mode production
-CMD ["ts-node", "--loader", "ts-node/esm", "src/server.ts"]
+CMD ["node", "dist/server.js"]
