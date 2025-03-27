@@ -23,4 +23,4 @@ RUN npm install -g ts-node
 EXPOSE 3000
 
 # Démarrer l'application en mode production
-CMD ["ts-node", "src/server.ts"]
+CMD ["ts-node", "--loader", "ts-node/esm", "src/server.ts"]
