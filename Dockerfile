@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Démarrer l'application en mode production
-CMD ["node", "dist/server.js"]
+CMD ["tsx", "src/server.ts"]
