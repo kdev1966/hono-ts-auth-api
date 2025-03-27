@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { logger } from "../utils/logger.js";
-enum Role {
+export enum Role {
   ETUDIANT = "ETUDIANT",
   ENCADRANT = "ENCADRANT",
   // Add other roles if necessary
