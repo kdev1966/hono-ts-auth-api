@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@92.222.25.73:5432/encadrinyv01?schema=public
+      - JWT_SECRET=ton_secret_pour_jwt
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: encadrinyv01
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
