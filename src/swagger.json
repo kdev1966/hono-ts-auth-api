@@ -5,6 +5,42 @@
     "version": "1.0.0",
     "description": "API d'authentification avec Hono, Prisma et PostgreSQL"
   },
+  "components": {
+    "schemas": {
+      "UserRegistration": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "role": { "type": "string", "enum": ["ENCADRANT", "ETUDIANT"] }
+        },
+        "required": ["username", "email", "password"]
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "required": ["email", "password"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "code": { "type": "integer" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "paths": {
     "/auth/register": {
       "post": {
@@ -15,16 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                },
-                "required": ["username", "password"]
+                "$ref": "#/components/schemas/UserRegistration"
               }
             }
           }
@@ -34,7 +61,12 @@
             "description": "Utilisateur créé"
           },
           "400": {
-            "description": "Erreur de validation"
+            "description": "Erreur de validation",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
           }
         }
       }
@@ -48,12 +80,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "username": { "type": "string" },
-                  "password": { "type": "string" }
-                },
-                "required": ["username", "password"]
+                "$ref": "#/components/schemas/UserLogin"
               }
             }
           }
@@ -63,7 +90,12 @@
             "description": "Token JWT renvoyé"
           },
           "401": {
-            "description": "Identifiants invalides"
+            "description": "Identifiants invalides",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
           }
         }
       }
@@ -71,12 +103,18 @@
     "/auth/profile": {
       "get": {
         "summary": "Obtenir le profil utilisateur",
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Détails du profil utilisateur"
           },
           "401": {
-            "description": "Non autorisé"
+            "description": "Non autorisé",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
           }
         }
       }
