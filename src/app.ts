@@ -2,6 +2,7 @@
 
 import { Hono } from "hono";
 import authRoutes from "./routes/auth.routes.js";
+import swaggerRoutes from "./routes/swagger.routes";
 import { loggerMiddleware } from "./middlewares/logger.middleware.js";
 
 const app = new Hono();
@@ -11,5 +12,8 @@ app.use("*", loggerMiddleware);
 
 // Montage des routes d’authentification
 app.route("/auth", authRoutes);
+
+// Montage des routes Swagger sous /swagger
+app.route("/swagger", swaggerRoutes);
 
 export default app;
