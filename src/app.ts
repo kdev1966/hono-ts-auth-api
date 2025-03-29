@@ -2,7 +2,7 @@
 
 import { Hono } from "hono";
 import authRoutes from "./routes/auth.routes.js";
-import swaggerRoutes from "./routes/swagger.routes";
+import swaggerRoutes from "./routes/swagger.routes.js";
 import { loggerMiddleware } from "./middlewares/logger.middleware.js";
 
 const app = new Hono();
