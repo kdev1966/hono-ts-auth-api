@@ -5,6 +5,7 @@ import { HonoRequest } from "hono";
 import jwt from "jsonwebtoken";
 import { logger } from "../utils/logger.js";
 import dotenv from "dotenv";
+import { Role } from "@prisma/client";
 
 dotenv.config();
 const jwtSecret = process.env.JWT_SECRET as string;
@@ -30,4 +31,13 @@ export const authMiddleware = async (c: Context, next: Next) => {
     logger.error("Token invalide", err);
     return c.json({ error: "Token invalide" }, 401);
   }
+};
+
+export const checkRoleMiddleware = (requiredRole: Role) => {
+  return async (c: Context, next: Next) => {
+    if (c.req.user?.role !== requiredRole) {
+      return c.json({ error: "Accès interdit : rôle insuffisant" }, 403);
+    }
+    await next();
+  };
 };
