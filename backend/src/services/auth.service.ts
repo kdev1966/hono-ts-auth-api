@@ -52,3 +52,23 @@ export const loginUser = async (email: string, password: string) => {
   });
   return token;
 };
+
+// Fonction pour mettre à jour le profil utilisateur
+export const updateUserProfile = async (
+  userId: number,
+  updatedData: { username?: string; email?: string }
+) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        username: updatedData.username,
+        email: updatedData.email,
+      },
+    });
+    return updatedUser;
+  } catch (error) {
+    logger.error("Erreur lors de la mise à jour du profil", error);
+    throw new Error("Erreur lors de la mise à jour du profil");
+  }
+};

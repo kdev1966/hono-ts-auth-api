@@ -1,7 +1,12 @@
 // src/controllers/auth.controller.ts
 
 import { Context } from "hono";
-import { registerUser, loginUser, Role } from "../services/auth.service.js";
+import {
+  registerUser,
+  loginUser,
+  Role,
+  updateUserProfile,
+} from "../services/auth.service.js";
 import { z } from "zod";
 import { logger } from "../utils/logger.js";
 
@@ -22,6 +27,13 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
+});
+
+const updateProfileSchema = z.object({
+  username: z.string().min(3, "Username doit contenir au moins 3 caractères"),
+  email: z.string().email("Email invalide"),
+  password: z.string().min(6, "Password doit contenir au moins 6 caractères"),
+  role: z.enum([Role.ETUDIANT, Role.ENCADRANT]).optional(),
 });
 
 export const registerController = async (c: Context) => {
@@ -119,4 +131,47 @@ export const profileController = async (c: CustomContext) => {
       role: c.req.user.role,
     },
   });
+};
+
+export const updateProfileController = async (c: Context) => {
+  // Vérifier si l'utilisateur est authentifié
+  if (!c.req.user) {
+    return c.json({ error: "Non authentifié" }, 401);
+  }
+
+  try {
+    const payload = await c.req.json();
+    const validatedData = updateProfileSchema.parse(payload);
+
+    // Mettre à jour le profil de l'utilisateur
+    const updatedUser = await updateUserProfile(c.req.user.id, validatedData);
+
+    return c.json({
+      profile: {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+    });
+  } catch (error: any) {
+    logger.error("Erreur dans updateProfileController", error);
+
+    if (error instanceof z.ZodError) {
+      return c.json(
+        {
+          error: "Validation failed",
+          details: error.errors,
+        },
+        400
+      );
+    }
+
+    return c.json(
+      {
+        error: error?.message || "Erreur lors de la mise à jour du profil",
+      },
+      400
+    );
+  }
 };

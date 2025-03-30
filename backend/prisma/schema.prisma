@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProjectStatus {
+  EN_COURS
+  TERMINÉ
+  ANNULÉ
+}
+
+enum TaskStatus {
+  PENDANT
+  EN_COURS
+  TERMINÉ
+}
+
 model User {
   id       Int       @id @default(autoincrement())
   username String
