@@ -18,16 +18,16 @@ services:
     networks:
       - internal-network
     environment:
-      - POSTGRES_USER=db_root_user
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=T4m$8gLq#vR3!pK9
       - POSTGRES_DB=encadrinyv01
     ports:
       - "127.0.0.1:5432:5432" # Bind to localhost for security
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d encadrinyv01"]
       interval: 5s
       timeout: 5s
       retries: 5
