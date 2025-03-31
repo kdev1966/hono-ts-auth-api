@@ -11,16 +11,18 @@ services:
     environment:
       - PORT=3000
       - DATABASE_URL=postgresql://encadrin_api_usr:T4m$8gLqXvR3!pK9@postgres:5432/encadrinyv01?schema=public
-      - JWT_SECRET=7kLp@3$qZ9!fVdRbX2^sT8mN*YhW4+Pc$FjvQ!rH5@MzL9^BnS7!pKtG3$
+      - JWT_SECRET=7kLp@3KqZ9!fVdRbX2^sT8mN*YhW4+PcBFjvQ!rH5@MzL9^BnS7!pKtG3$
   postgres:
     image: postgres:15-alpine
     restart: always
     networks:
       - internal-network
     environment:
-      - POSTGRES_USER=encadrin_api_usr
+      - POSTGRES_USER=db_root_user
       - POSTGRES_PASSWORD=T4m$8gLq#vR3!pK9
       - POSTGRES_DB=encadrinyv01
+    ports:
+      - "127.0.0.1:5432:5432" # Bind to localhost for security
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
