@@ -6,21 +6,32 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
+    networks:
+      - internal-network
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://postgres:postgres@92.222.25.73:5432/encadrinyv01?schema=public
-      - JWT_SECRET=ton_secret_pour_jwt
+      - DATABASE_URL=postgresql://encadrin_api_usr:T4m$8gLqXvR3!pK9@postgres:5432/encadrinyv01?schema=public
+      - JWT_SECRET=7kLp@3$qZ9!fVdRbX2^sT8mN*YhW4+Pc$FjvQ!rH5@MzL9^BnS7!pKtG3$
   postgres:
     image: postgres:15-alpine
     restart: always
+    networks:
+      - internal-network
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: encadrinyv01
-    ports:
-      - "5432:5432"
+      - POSTGRES_USER=encadrin_api_usr
+      - POSTGRES_PASSWORD=T4m$8gLq#vR3!pK9
+      - POSTGRES_DB=encadrinyv01
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U db_root_user -d encadrinyv01"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
+
+networks:
+  internal-network:
+    driver: bridge
