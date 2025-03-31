@@ -10,7 +10,7 @@ services:
       - internal-network
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://encadrin_api_usr:T4m$8gLqXvR3!pK9@postgres:5432/encadrinyv01?schema=public
+      - DATABASE_URL=postgresql://encadrin_api_usr:T4m%248gLqXvR3%21pK9@postgres:5432/encadrinyv01?schema=public
       - JWT_SECRET=7kLp@3KqZ9!fVdRbX2^sT8mN*YhW4+PcBFjvQ!rH5@MzL9^BnS7!pKtG3$
   postgres:
     image: postgres:15-alpine
@@ -25,6 +25,7 @@ services:
       - "127.0.0.1:5432:5432" # Bind to localhost for security
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U db_root_user -d encadrinyv01"]
       interval: 5s
