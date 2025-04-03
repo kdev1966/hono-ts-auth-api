@@ -2,7 +2,6 @@
 
 import { Context } from "hono";
 import prisma from "../prisma/client.js";
-import { Prisma } from "@prisma/client";
 
 // Enumération des statuts des projets
 export enum ProjectStatus {

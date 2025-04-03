@@ -1,7 +1,6 @@
 // src/middlewares/auth.middleware.ts
 
 import { Context, Next } from "hono";
-import { HonoRequest } from "hono";
 import jwt from "jsonwebtoken";
 import { logger } from "../utils/logger.js";
 import dotenv from "dotenv";
