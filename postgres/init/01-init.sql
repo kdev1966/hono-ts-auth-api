@@ -1,16 +1,22 @@
--- Création du rôle avec droits étendus pour Prisma
+-- Supprimer le rôle et la base si existants (pour les tests)
+DROP ROLE IF EXISTS encadrin_api_usr;
+DROP DATABASE IF EXISTS encadrinyv01;
+
+-- Recréer avec encodage explicite
 CREATE ROLE encadrin_api_usr WITH 
     LOGIN 
-    PASSWORD '${API_DB_PASSWORD}'
-    CREATEDB   -- Nécessaire pour les migrations
-    CREATEROLE;-- Nécessaire pour la gestion des schémas
+    PASSWORD 'dR89V4TBDsxtQ9hv' 
+    CREATEDB 
+    CREATEROLE;
 
--- Création de la base de données avec ownership explicite
-CREATE DATABASE encadrinyv01 
-    OWNER encadrin_api_usr 
-    ENCODING 'UTF8';
+CREATE DATABASE encadrinyv01
+    OWNER encadrin_api_usr
+    ENCODING 'UTF8'
+    LC_COLLATE 'C'
+    LC_CTYPE 'C'
+    TEMPLATE template0;
 
--- Accorder tous les privilèges + héritage futur
-GRANT ALL PRIVILEGES ON DATABASE encadrinyv01 TO encadrin_api_usr;
+-- Accorder les privilèges étendus
+\c encadrinyv01
 ALTER DEFAULT PRIVILEGES FOR ROLE encadrin_api_usr IN SCHEMA public 
     GRANT ALL ON TABLES TO encadrin_api_usr;
