@@ -25,7 +25,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "PGPASSWORD=T4m$8gLqXvR3!pK9 pg_isready -U encadrin_api_usr -d encadrinyv01"
+        - "PGPASSWORD==${API_DB_PASSWORD} pg_isready -U encadrin_api_usr -d encadrinyv01"
       interval: 10s
       timeout: 5s
       retries: 10
