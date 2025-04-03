@@ -14,8 +14,8 @@ COPY . .
 
 RUN npm run build
 
-# Étape de production
-FROM node:18-alpine
+# Étape de production (ajoutez explicitement 'AS production')
+FROM node:18-alpine AS production 
 
 WORKDIR /usr/src/app
 
