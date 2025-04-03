@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: ./backend
+      target: builder # Utilise le stage de construction
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://encadrin_api_usr:${API_DB_PASSWORD}@postgres:5432/encadrinyv01?schema=public
+    command: npm run dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    # Configuration identique à la production mais avec données éphémères
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=encadrinyv01
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata-dev:
