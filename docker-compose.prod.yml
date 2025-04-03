@@ -10,6 +10,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
       - DATABASE_URL=postgresql://encadrin_api_usr:${API_DB_PASSWORD}@postgres:5432/encadrinyv01?schema=public
     depends_on:
       postgres:
