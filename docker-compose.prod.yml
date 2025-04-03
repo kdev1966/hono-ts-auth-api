@@ -26,7 +26,6 @@ services:
       - LANG=en_US.UTF-8
       - LC_ALL=en_US.UTF-8
     volumes:
-      - pgdata-prod:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:Z
     healthcheck:
       test:
