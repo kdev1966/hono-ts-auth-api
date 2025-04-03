@@ -33,8 +33,10 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d encadrinyv01"]
-      interval: 5s
+      test:
+        - "CMD-SHELL"
+        - "PGPASSWORD=T4m$8gLqXvR3!pK9 pg_isready -U encadrin_api_usr -d encadrinyv01"
+      interval: 10s
       timeout: 5s
       retries: 10
 

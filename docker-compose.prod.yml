@@ -23,10 +23,12 @@ services:
     volumes:
       - pgdata-prod:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d encadrinyv01"]
+      test:
+        - "CMD-SHELL"
+        - "PGPASSWORD=T4m$8gLqXvR3!pK9 pg_isready -U encadrin_api_usr -d encadrinyv01"
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
 volumes:
   pgdata-prod:
