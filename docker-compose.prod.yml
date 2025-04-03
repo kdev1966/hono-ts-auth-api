@@ -19,6 +19,8 @@ services:
   postgres:
     image: postgres:15-alpine
     restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - API_DB_PASSWORD=${API_DB_PASSWORD}
