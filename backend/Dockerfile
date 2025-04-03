@@ -1,29 +1,37 @@
-# Utiliser l'image Node.js officielle basée sur Alpine
-FROM node:18-alpine
+# Étape de construction
+FROM node:18-alpine AS builder
 
-# Définir le répertoire de travail
 WORKDIR /usr/src/app
 
-# Copier les fichiers de dépendances et le schéma Prisma
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Installer les dépendances y compris Prisma CLI
 RUN npm install
 RUN npm install prisma -g
-
-# Générer le client Prisma
 RUN npx prisma generate
 
-# Copier le code source
 COPY . .
 
-# Compiler le code TypeScript
 RUN npm run build
 
-# Exposer le port (celui défini dans .env, ici 3000)
+# Étape de production
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/prisma ./prisma
+
+RUN apk add --no-cache tini && \
+    addgroup -S app && \
+    adduser -S app -G app && \
+    chown -R app:app .
+
+USER app
+
 EXPOSE 3000
 
-# Démarrer l'application en mode production
-#CMD ["node", "dist/server.js"]
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD npx prisma migrate deploy && node dist/server.js

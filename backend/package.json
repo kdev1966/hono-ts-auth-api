@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "npx prisma generate && tsc"
+    "build": "npx prisma generate && tsc",
+    "build:prod": "npm prune --production && npm run build"
   },
   "keywords": [],
   "author": "",
