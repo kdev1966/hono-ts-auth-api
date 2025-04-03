@@ -1,3 +1,5 @@
+# encadriny/docker-compose.prod.yml
+
 services:
   api:
     build:
@@ -20,6 +22,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=postgres
       - POSTGRES_DB=encadrinyv01
+      - API_DB_PASSWORD=${API_DB_PASSWORD}
       - LANG=en_US.UTF-8
       - LC_ALL=en_US.UTF-8
     volumes:
@@ -28,7 +31,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "PGPASSWORD==${API_DB_PASSWORD} pg_isready -U encadrin_api_usr -d encadrinyv01"
+        - "PGPASSWORD=${API_DB_PASSWORD} pg_isready -U encadrin_api_usr -d encadrinyv01"
       interval: 10s
       timeout: 5s
       retries: 10

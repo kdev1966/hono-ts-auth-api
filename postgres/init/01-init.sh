@@ -1,3 +1,5 @@
+# backend/postgres/init/01-init.sh
+
 #!/bin/bash
 set -eo pipefail
 
