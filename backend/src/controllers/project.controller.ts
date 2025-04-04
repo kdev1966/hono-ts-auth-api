@@ -38,7 +38,7 @@ export const createProjectController = async (c: Context) => {
       Array.isArray(supervisorIds) &&
       supervisorIds.length > 0
     ) {
-      const supervisors = await Promise.all(
+      await Promise.all(
         supervisorIds.map((supervisorId: number) =>
           prisma.projectSupervisor.create({
             data: {
