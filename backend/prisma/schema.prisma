@@ -11,44 +11,160 @@ enum ProjectStatus {
   EN_COURS
   TERMINÉ
   ANNULÉ
+  EN_ATTENTE
+  VALIDÉ
 }
 
 enum TaskStatus {
   PENDANT
   EN_COURS
   TERMINÉ
-}
-
-model User {
-  id       Int       @id @default(autoincrement())
-  username String
-  email    String    @unique
-  password String
-  role     Role      @default(ETUDIANT)
-  projects Project[] // Relation vers plusieurs projets
-}
-
-model Project {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  status      String
-  userId      Int      // Changer ici pour que ce soit du type `Int`
-  user        User     @relation(fields: [userId], references: [id]) // Relation vers l'utilisateur
-  tasks       Task[]   // Relation vers plusieurs tâches
-}
-
-model Task {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  status      String
-  dueDate     DateTime
-  project     Project  @relation(fields: [projectId], references: [id])
-  projectId   String
+  EN_RETARD
 }
 
 enum Role {
   ENCADRANT
   ETUDIANT
+  ADMIN
+}
+
+model User {
+  id                  Int                  @id @default(autoincrement())
+  username            String
+  email               String               @unique
+  password            String
+  role                Role                 @default(ETUDIANT)
+  projects            Project[]            // Projets créés par l'utilisateur
+  supervisedProjects  ProjectSupervisor[]  // Projets encadrés
+  assignedTasks       TaskAssignment[]     // Tâches assignées
+  comments            Comment[]            // Commentaires laissés
+  documents           Document[]           // Documents téléversés
+  notifications       Notification[]       // Notifications reçues
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model Project {
+  id              String               @id @default(cuid())
+  title           String
+  description     String
+  status          ProjectStatus
+  startDate       DateTime             @default(now())
+  endDate         DateTime?
+  userId          Int                  // Créateur du projet (généralement étudiant)
+  user            User                 @relation(fields: [userId], references: [id])
+  supervisors     ProjectSupervisor[]  // Encadrants du projet
+  tasks           Task[]               // Tâches associées
+  comments        Comment[]            // Commentaires sur le projet
+  documents       Document[]           // Documents liés au projet
+  meetingNotes    MeetingNote[]        // Compte-rendus de réunion
+  milestones      Milestone[]          // Jalons importants du projet
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model ProjectSupervisor {
+  id          Int       @id @default(autoincrement())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  supervisorId Int
+  supervisor  User      @relation(fields: [supervisorId], references: [id])
+  assignedAt  DateTime  @default(now())
+
+  @@unique([projectId, supervisorId])
+}
+
+model Task {
+  id              String           @id @default(cuid())
+  title           String
+  description     String
+  status          TaskStatus
+  priority        Int              @default(1)  // 1=Low, 2=Medium, 3=High
+  dueDate         DateTime
+  completedDate   DateTime?
+  projectId       String
+  project         Project          @relation(fields: [projectId], references: [id])
+  assignments     TaskAssignment[] // Relations avec les utilisateurs assignés à cette tâche
+  comments        Comment[]        // Commentaires sur la tâche
+  documents       Document[]       // Documents liés à la tâche
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model TaskAssignment {
+  id        Int       @id @default(autoincrement())
+  taskId    String
+  task      Task      @relation(fields: [taskId], references: [id])
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  assignedAt DateTime @default(now())
+
+  @@unique([taskId, userId])
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+  taskId      String?
+  task        Task?     @relation(fields: [taskId], references: [id])
+  documentId  Int?
+  document    Document? @relation(fields: [documentId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Document {
+  id          Int        @id @default(autoincrement())
+  title       String
+  filename    String
+  fileType    String     // mimetype
+  fileSize    Int        // taille en octets
+  path        String     // chemin d'accès au fichier
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  projectId   String?
+  project     Project?   @relation(fields: [projectId], references: [id])
+  taskId      String?
+  task        Task?      @relation(fields: [taskId], references: [id])
+  version     Int        @default(1)
+  comments    Comment[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model MeetingNote {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  date        DateTime
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Milestone {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  dueDate     DateTime
+  completed   Boolean   @default(false)
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  read        Boolean   @default(false)
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
 }

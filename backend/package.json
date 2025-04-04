@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts",
+    "dev": "cross-env NODE_ENV=development tsx watch src/server.ts",
     "build": "npx prisma generate && tsc",
     "build:prod": "npm prune --production && npm run build"
   },
@@ -26,6 +26,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.13",
+    "cross-env": "^7.0.3",
     "prisma": "^6.5.0",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.3",

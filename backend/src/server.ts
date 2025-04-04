@@ -4,8 +4,19 @@ import app from "./app.js";
 import dotenv from "dotenv";
 import { logger } from "./utils/logger.js";
 import { serve } from "@hono/node-server";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Configuration du chemin .env
+const envPath = resolve(
+  __dirname,
+  process.env.NODE_ENV === "production" ? "../.env" : "../.env.dev"
+);
+dotenv.config({ path: envPath });
+
 const port = process.env.PORT || 3000;
 
 serve(
@@ -15,5 +26,7 @@ serve(
   },
   () => {
     logger.info(`Serveur Hono démarré sur le port ${port}`);
+    logger.info(`Environnement: ${process.env.NODE_ENV}`);
+    logger.info(`Database URL: ${process.env.DATABASE_URL}`);
   }
 );
