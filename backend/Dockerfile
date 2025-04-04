@@ -7,6 +7,7 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm install
+RUN npm install @peculiar/webcrypto
 RUN npm install prisma -g
 RUN npx prisma generate
 

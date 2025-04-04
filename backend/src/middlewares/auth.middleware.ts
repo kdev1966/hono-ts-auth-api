@@ -3,11 +3,14 @@
 import { Context, Next } from "hono";
 //import jwt from "jsonwebtoken";
 import { jwt } from "hono/jwt";
+import { Crypto } from "@peculiar/webcrypto";
 //import { logger } from "../utils/logger.js";
 import dotenv from "dotenv";
 import { Role } from "@prisma/client";
 
 dotenv.config();
+// Réinitialisation explicite
+(globalThis as any).crypto = new Crypto();
 //const jwtSecret = process.env.JWT_SECRET as string;
 
 declare module "hono" {
@@ -15,8 +18,10 @@ declare module "hono" {
     user?: any;
   }
 }
+
 export const authMiddleware = jwt({
   secret: process.env.JWT_SECRET!, // Ajout du ! pour TypeScript
+  alg: "HS256",
   cookie: "token",
 });
 

@@ -1,7 +1,10 @@
 // src/server.ts
 
 import { Crypto } from "@peculiar/webcrypto";
-(globalThis as any).crypto = new Crypto();
+// Initialisation explicite pour Node.js
+if (!globalThis.crypto) {
+  (globalThis as any).crypto = new Crypto();
+}
 import app from "./app.js";
 import dotenv from "dotenv";
 import { logger } from "./utils/logger.js";
