@@ -4,7 +4,7 @@ import {
   getAllProjectsController,
   updateProjectController,
   deleteProjectController,
-} from "../controllers/project.controller";
+} from "../controllers/project.controller.js";
 
 const projectRoutes = new Hono();
 
