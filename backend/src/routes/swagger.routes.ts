@@ -1,6 +1,6 @@
 // src/routes/swagger.routes.ts
 import { Hono } from "hono";
-import swaggerDocument from "../swagger.json" assert { type: "json" };
+import swaggerDocument from "../swagger.json" with { type: "json" };
 
 const swaggerRoutes = new Hono();
 
