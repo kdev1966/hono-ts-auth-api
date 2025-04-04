@@ -1,34 +1,31 @@
-# encadriny/docker-compose.yml
+# encadriny/docker-compose.prod.yml
+
 services:
   api:
     build:
       context: ./backend
-      target: production
+      target: production # Utilise le stage de production
+    restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=postgresql://encadrin_api_usr:${API_DB_PASSWORD}@postgres:5432/encadrinyv01?schema=public
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - internal-network
-    environment:
-      - PORT=3000
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - DATABASE_URL=postgresql://encadrin_api_usr:${API_DB_PASSWORD}@postgres:5432/encadrinyv01?schema=public
 
   postgres:
     image: postgres:15-alpine
     restart: always
-    networks:
-      - internal-network
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - API_DB_PASSWORD=${API_DB_PASSWORD}
-    ports:
-      - "127.0.0.1:5432:5432" # Bind to localhost for security
     volumes:
-      - ./postgres/init:/docker-entrypoint-initdb.d
+      - ./postgres/init:/docker-entrypoint-initdb.d:Z
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -38,8 +35,4 @@ services:
       retries: 10
 
 volumes:
-  pgdata:
-
-networks:
-  internal-network:
-    driver: bridge
+  pgdata-prod:
